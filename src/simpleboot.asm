@@ -1,3 +1,4 @@
+org 0x7c00
 ; Infinite loop (e9 fd ff)
 loop:
     jmp loop 
