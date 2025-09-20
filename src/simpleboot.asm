@@ -1,5 +1,4 @@
 org 0x7c00
-int 16
 
 _start:
   mov ah, 0x0e ; tty mode
@@ -27,7 +26,7 @@ _start:
   mov al, 'a'
   int 0x10
   mov al, 'n'
-  int 0x10  
+  int 0x10
 
 jmp $ ; jump to current address = infinite loop
 

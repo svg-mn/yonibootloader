@@ -1,15 +1,38 @@
 org 0x7c00
 
-mov ah, 0x0e ; tty mode
+start:
+  jmp main
 
-mov bp, 0x8000
-mov sp, bp
+puts:
+  ;push si
+  ;push ax  
 
-push "A"
-push "B"
+.loop:
+  lodsb
+  or al, al
+  jz .done
+  
+  mov ah, 0x0e
+  int 0x10
 
-mov al, [0x7ffe] 
-int 0x10
+  jmp .loop
 
-times 510 - ($-$$) db 0
+.done:
+  pop si
+  ret
+
+main:
+  ;mov ax, 0
+  ;mov ds, ax
+  ;mov es, ax
+
+  ;mov ss, ax
+  ;mov sp, ax ;0x7c00
+  
+  mov si, msg
+  call puts
+ 
+msg: db 'hello world'
+
+times 510-($-$$) db 0
 dw 0xaa55 
