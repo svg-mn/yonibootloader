@@ -16,7 +16,9 @@ load_segment:
   int 0x13
   ret
 
-.loop:
+.print:
+  ; msg: db 'hello world', 0
+  ; mov si, msg
   lodsb
   or al, al
   jz .done
@@ -24,16 +26,15 @@ load_segment:
   mov ah, 0x0e
   int 0x10
 
-  jmp .loop
+  jmp .print
 
 .done:
   ret
 
 main:
-  mov si, msg
-  call puts
+  mov ax, 0x0000
+  call load_segment
+  jmp 0x0000:0x7e00
  
-msg: db 'hello world'
-
 times 510-($-$$) db 0
 dw 0xaa55 
