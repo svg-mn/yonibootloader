@@ -38,9 +38,6 @@ load_gdt:
   or eax, 1
   mov cr0, eax
   
-  ; set to 32 bit 
-  
-  
   ; Far jump to flush the prefetch queue and load new CS
   jmp 0x08:reloade_CS
 
@@ -71,7 +68,6 @@ gdt_descriptor:
   dd gdt_start                ; Address of GDT
 
 bits 32
-
 reloade_CS: 
   ; Set up segment registers
   mov ax, 0x10  ; Data segment selector
