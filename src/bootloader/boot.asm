@@ -1,33 +1,50 @@
 org 0x7c00
 bits 16
 
-
 ; msg: db 'hello world', 0
 
-start:  
-  cli
+main:
+  call load_os_lba
+  call load_gdt
 
+load_os_lba:
+  ; Load the OS from disk to memory using LBA
+  xor ax, ax
   mov ax, 0x0000
-  mov ss, ax
-  mov sp, 0x7c00
-  
-  jmp main
-
-load_segment:
-  ; INT 13h AH=02h: Read Sectors From Drive
-  mov ah, 0x02
-  mov al, 0x01        ; Number of sectors to read
-  mov ch, 0x00        ; Cylinder 0
-  mov cl, 0x02        ; Sector 2 (first sector is 1
-  mov dh, 0x00        ; Head 0
-  mov dl, 0x00        ; Drive 0 (first floppy drive)
-  mov es, ax          ; Segment to load to (0x0000)
-  mov bx, 0x7e00      ; Offset to load to (0x
+  mov ds, ax
+  mov si, dap
+  mov ah, 0x42
+  mov dl, 0x80
   int 0x13
+  
+  jc load_os_error 
+
+  jmp load_os_success
+  
+  dap:
+    db 0x10
+    db 0x00
+    dw 0x0001
+    dw 0x7e00
+    dw 0x0000
+    ; dd 0x7e000000
+    dq 0x0000000000000001
+  
+  load_os_error:
+    mov al, 'E'
+    mov ah, 0x0e
+    int 0x10
+    jmp load_os_error
+  
+  load_os_success:
+    mov al, 'S'
+    mov ah, 0x0e
+    int 0x10
+    ; jmp load_os_success
+    ret
   ret
 
-main:
-  call load_gdt  
+
 
 load_gdt:
   ; Load the GDT
@@ -76,8 +93,8 @@ reloade_CS:
   mov fs, ax
   mov gs, ax
   mov ss, ax 
-  ; mov esp, 0x90000
-  ; mov dword [0xB8000], 0x4D50004E 
+  mov esp, 0x90000
+  mov dword [0xB8000], 0x4D50004E 
 
 pm_hang:
     cli
