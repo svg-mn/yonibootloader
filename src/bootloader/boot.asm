@@ -10,7 +10,6 @@ main:
 load_os_lba:
   ; Load the OS from disk to memory using LBA
   xor ax, ax
-  mov ax, 0x0000
   mov ds, ax
   mov si, dap
   mov ah, 0x42
