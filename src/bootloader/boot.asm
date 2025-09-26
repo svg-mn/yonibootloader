@@ -1,11 +1,9 @@
 org 0x7c00
 bits 16
 
-; msg: db 'hello world', 0
-
 main:
   call load_os_lba
-  call load_gdt
+  ; call load_gdt
 
 load_os_lba:
   ; Load the OS from disk to memory using LBA
@@ -42,8 +40,6 @@ load_os_lba:
     ; jmp load_os_success
     ret
   ret
-
-
 
 load_gdt:
   ; Load the GDT
@@ -83,8 +79,8 @@ gdt_descriptor:
   dw gdt_end - gdt_start - 1  ; Size of GDT - 1
   dd gdt_start                ; Address of GDT
 
-bits 32
 reloade_CS: 
+  bits 32
   ; Set up segment registers
   mov ax, 0x10  ; Data segment selector
   mov ds, ax
@@ -92,8 +88,9 @@ reloade_CS:
   mov fs, ax
   mov gs, ax
   mov ss, ax 
-  mov esp, 0x90000
-  mov dword [0xB8000], 0x4D50004E 
+
+reloade_kernel:
+  jmp 0x7e00
 
 pm_hang:
     cli
