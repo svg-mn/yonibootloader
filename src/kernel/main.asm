@@ -1,3 +1,0 @@
-org 0x7e00
-cli
-hlt

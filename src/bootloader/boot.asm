@@ -3,7 +3,7 @@ bits 16
 
 main:
   call load_os_lba
-  ; call load_gdt
+  call load_gdt
 
 load_os_lba:
   ; Load the OS from disk to memory using LBA
@@ -24,8 +24,8 @@ load_os_lba:
     dw 0x0001
     dw 0x7e00
     dw 0x0000
-    ; dd 0x7e000000
     dq 0x0000000000000001
+    ret
   
   load_os_error:
     mov al, 'E'
@@ -37,8 +37,8 @@ load_os_lba:
     mov al, 'S'
     mov ah, 0x0e
     int 0x10
-    ; jmp load_os_success
     ret
+  ; jmp load_gdt
   ret
 
 load_gdt:
@@ -47,11 +47,12 @@ load_gdt:
 
   ; Enable protected mode
   mov eax, cr0
-  or eax, 1
+  or eax, 00000000000000000000000000000001b
   mov cr0, eax
-  
+
   ; Far jump to flush the prefetch queue and load new CS
   jmp 0x08:reloade_CS
+  ret
 
 
 gdt_start:
@@ -65,6 +66,7 @@ gdt_start:
   db 0x9A         ; Access byte
   db 0xCF         ; Limit high (bits16-19=0xF) + Flags (0xC = Gran=1, 32-bit=1)
   db 0x00         ; Base high (bits 24-31)
+
   ; Data segment descriptor
   dw 0xFFFF       ; Limit low (bits 0-15)
   dw 0x0000       ; Base low (bits 0-15)
@@ -88,9 +90,14 @@ reloade_CS:
   mov fs, ax
   mov gs, ax
   mov ss, ax 
+  mov dword [0xB8000], 0x4D50004E
+  call reloade_kernel
+  ; call pm_hang
+
 
 reloade_kernel:
   jmp 0x7e00
+  ; ret
 
 pm_hang:
     cli
