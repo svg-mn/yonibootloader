@@ -1,21 +1,20 @@
-ENTRY(_start)
+/* boot.ld - link so VMA (load address) = 0x7C00 */
+ENTRY(start)
 
 SECTIONS
 {
-    . = 0x7E00;
+    . = 0x7C00;
 
-    .text :
-    {
+    .text : {
         *(.text)
+        *(.rodata)
     }
 
-    .data :
-    {
+    .data : {
         *(.data)
     }
 
-    .bss :
-    {
+    .bss : {
         *(.bss COMMON)
     }
 }
