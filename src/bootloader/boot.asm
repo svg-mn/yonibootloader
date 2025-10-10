@@ -1,11 +1,10 @@
-BITS 16
-global _start
-extern checkCPUID
+org 0x7C00
+; BITS 16
 
 _start:
     call load_os_lba
     call load_gdt
-    call pm_hang
+    ; call pm_hang
     ; call checkCPUID 
 
 ; -------------------------------------------------------------------------
@@ -101,16 +100,20 @@ load_gdt:
         mov ss, ax
 
         ; stack for protected mode
-        mov esp, 0x90000
+        mov esp, 0x7E00
 
-        mov dword [0xB8000], 0x4D50004E
+        ; mov dword [0xB8000], 0x4D50004E
+        jmp checkCPUID  ; jump to code segment selector (0x08) 
+        call pm_hang
 
-        jmp pm_hang
+%include "src/bootloader/cpuid.inc"
 
 pm_hang:
     cli
     hlt
     jmp pm_hang
+
+
 
 times 510-($-$$) db 0
 dw 0xaa55 
