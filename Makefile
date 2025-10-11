@@ -23,7 +23,7 @@ $(BUILD_DIR)/disk.img: $(BUILD_DIR)/boot.bin
 	dd if=$(BUILD_DIR)/boot.bin of=$(BUILD_DIR)/disk.img bs=512 count=1 conv=notrunc
 	dd if=$(BUILD_DIR)/kernel.bin of=$(BUILD_DIR)/disk.img bs=512 seek=1 conv=notrunc
 
-$(BUILD_DIR)/boot.bin: $(SRC_DIR)/$(BOOT_FILE).asm
+$(BUILD_DIR)/boot.bin: $(SRC_DIR)/$(BOOT_FILE).asm $(SRC_DIR)/cpuid.inc
 ########
 # Assemble the bootloader source file to create an object file
 ########

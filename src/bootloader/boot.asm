@@ -103,12 +103,13 @@ load_gdt:
         mov esp, 0x7E00
 
         ; mov dword [0xB8000], 0x4D50004E
-        jmp checkCPUID  ; jump to code segment selector (0x08) 
+        call checkCPUID  ; jump to code segment selector (0x08) 
         call pm_hang
 
 %include "src/bootloader/cpuid.inc"
 
 pm_hang:
+    mov dword [0xB8000], 0x4D50004E
     cli
     hlt
     jmp pm_hang
